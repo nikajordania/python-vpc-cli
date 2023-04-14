@@ -176,20 +176,34 @@ def object_arguments(parser):
 
 
 def host_arguments(parser):
-  parser.add_argument('name', nargs="?", type=str, help="Pass Bucket name.")
+  parser.add_argument(
+        "bucket_name",
+        type=str,
+        help="Pass bucket name."
+  )
 
-  parser.add_argument("-wc",
-                      "--website_configuration",
-                      choices=["False", "True"],
-                      help="set website configuration",
-                      type=str,
-                      nargs="?",
-                      const="True")
+  parser.add_argument(
+        "-wc",
+        "--website_configuration",
+        choices=["False", "True"],
+        type=str,
+        help="set website configs",
+        default=None
+  )
 
-  parser.add_argument("-hs",
-                      "--host_static",
-                      type=str,
-                      help="host file/folder",
-                      default=None)
+  parser.add_argument(
+        "-hs",
+        "--host_static",
+        type=str,
+        help="host static file",
+        default=None
+  )
 
+  parser.add_argument(
+        "-src",
+        "--source",
+        type=str,
+        help="host static web page configuration",
+        default=None
+  )
   return parser

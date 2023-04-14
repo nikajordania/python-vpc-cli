@@ -10,7 +10,7 @@ def static_web_page_file(aws_s3_client, bucket_name, filename):
     if not bucket_exists(aws_s3_client, bucket_name):
         raise ValueError("Bucket does not exists")
 
-    root = Path(f'static_web_page/{filename}').expanduser().resolve()
+    root = Path(filename).expanduser().resolve()
 
     def __handle_directory(file_folder):
         if file_folder.is_file():
@@ -40,7 +40,7 @@ def __upload_static_web_files(aws_s3_client, bucket_name, file_path, filename):
         ".css": "text/plain"
     }
 
-    content_type = mime_type if mime_type in allowed_types.values() else None
+    content_type = mime_type
 
     if ".css" == file_path.suffix:
         content_type = "text/css"

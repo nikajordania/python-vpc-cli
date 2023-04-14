@@ -1,3 +1,5 @@
+import glob
+import os
 from urllib.request import urlopen
 import io
 from hashlib import md5
@@ -114,7 +116,7 @@ def upload_local_file(aws_s3_client, bucket_name, filename, keep_file_name, uplo
         "txt": "text/plain"
     }
 
-    file_path = Path(f"awss3/static/{filename}")
+    file_path = Path(f"static/{filename}")
     mime_type = magic.from_file(file_path, mime=True)
     content_type = None
     file_name = None
@@ -165,3 +167,31 @@ def upload_local_file(aws_s3_client, bucket_name, filename, keep_file_name, uplo
         bucket_name,
         file_name
     )
+
+
+def upload_dir(aws_s3_client, localDir, awsInitDir, bucketName, tag, prefix='/'):
+
+    cwd = str(Path.cwd())
+    print(cwd)
+    p = Path(os.path.join(Path.cwd(), localDir))
+    print(p)
+    mydirs = list(p.glob('**'))
+    for mydir in mydirs:
+        fileNames = glob.glob(os.path.join(mydir, tag))
+        fileNames = [f for f in fileNames if not Path(f).is_dir()]
+        rows = len(fileNames)
+        for i, fileName in enumerate(fileNames):
+            fileName = str(fileName).replace(cwd, '')
+            if fileName.startswith(prefix):  # only modify the text if it starts with the prefix
+                fileName = fileName.replace(prefix, "", 1) # remove one instance of prefix
+            print(f"fileName {fileName}")
+
+            awsPath = os.path.join(awsInitDir, str(fileName))
+            aws_s3_client.upload_file(fileName, bucketName, awsPath)
+            
+def upload_dir(aws_s3_client, localDir, bucketName):
+    for root, dirs, files in os.walk(localDir):
+      for file in files:
+        local_file_path = os.path.join(root, file)
+        print(local_file_path)
+        aws_s3_client.upload_file(local_file_path, bucketName, local_file_path)

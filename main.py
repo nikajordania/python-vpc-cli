@@ -6,12 +6,11 @@ from bucket.policy import read_bucket_policy, assign_policy
 from bucket.versioning import versioning
 from bucket.encryption import set_bucket_encryption, read_bucket_encryption
 from bucket.organize import object_per_extension
+from host_static.host_web_configuration import source_to_web_host
 from object.crud import download_file_and_upload_to_s3, get_objects, upload_local_file
 from object.versioning import list_object_versions, rollback_to_version
 from my_args import bucket_arguments, object_arguments, host_arguments
 # from host_static import host_web_configuration, host_web_page_files
-from host_static.host_web_configuration import set_bucket_website_policy
-from host_static.host_web_page_files import static_web_page_file
 import argparse
 
 parser = argparse.ArgumentParser(
@@ -104,12 +103,9 @@ def main():
                     print(f' Name:  {bucket["Name"]}')
 
         case "host":
-          # print(f"value of name {args.name}")
-          # exit(args.name)
-          if args.website_configuration:
-            set_bucket_website_policy(s3_client, args.name, True)
-          if args.host_static:
-            static_web_page_file(s3_client, args.name, args.host_static)
+            if args.source is not None:
+                source_to_web_host(s3_client, args)
+            
 
 
 if __name__ == "__main__":

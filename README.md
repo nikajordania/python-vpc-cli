@@ -104,3 +104,20 @@ Host static file with folders
 ```shell
 python main.py host "your-bucket-name" --host_static "separate_project"
 ```
+
+Upload static web page to s3 
+```shell
+python main.py host nztest11111 --source "html_demo_site"
+```
+Result
+```
+website configuration assigned
+public read policy assigned!
+text/html text/html
+text/plain text/plain
+text/html text/html
+image/jpeg image/jpeg
+image/jpeg image/jpeg
+image/jpeg image/jpeg
+```
+http://nztest11111.s3-website-us-west-2.amazonaws.com
