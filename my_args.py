@@ -207,3 +207,22 @@ def host_arguments(parser):
         default=None
   )
   return parser
+
+
+def quote_arguments(parser):
+    parser.add_argument(
+        'bucket_name',
+        type=str,
+        help="Pass bucket name.")
+
+    parser.add_argument(
+        '--inspire',
+        nargs='?',
+        help='if inspire flag empty Get a random quote else get quote by author.')
+
+    parser.add_argument(
+        '--save',
+        help='Save quote as json file to an S3 bucket.',
+        action='store_true')
+
+    return parser

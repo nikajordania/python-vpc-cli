@@ -106,6 +106,7 @@ python main.py host "your-bucket-name" --host_static "separate_project"
 ```
 
 Upload static web page to s3 
+
 ```shell
 python main.py host nztest11111 --source "html_demo_site"
 ```
@@ -121,3 +122,22 @@ image/jpeg image/jpeg
 image/jpeg image/jpeg
 ```
 http://nztest11111.s3-website-us-west-2.amazonaws.com
+
+
+If inspire flag empty Get a random quote.
+
+```shell
+python main.py quote "your-bucket-name" --inspire
+```
+
+If inspire flag has parameter Get quote by author.
+
+```shell
+python main.py quote "nztest1111" --inspire "Yoda"
+```
+
+Save quote as json file to an S3 bucket.
+
+```shell
+python main.py quote "nztest1111" --inspire "Yoda" --save
+```

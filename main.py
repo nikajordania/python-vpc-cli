@@ -9,9 +9,10 @@ from bucket.organize import object_per_extension
 from host_static.host_web_configuration import source_to_web_host
 from object.crud import download_file_and_upload_to_s3, get_objects, upload_local_file
 from object.versioning import list_object_versions, rollback_to_version
-from my_args import bucket_arguments, object_arguments, host_arguments
+from my_args import bucket_arguments, object_arguments, host_arguments, quote_arguments
 # from host_static import host_web_configuration, host_web_page_files
 import argparse
+from quote.quote_api import get_quotes, get_random_quote, get_random_quote_by_author, save_to_s3
 
 parser = argparse.ArgumentParser(
     description="CLI program that helps with S3 buckets.",
@@ -25,6 +26,7 @@ bucket_arguments(subparsers.add_parser("bucket", help="work with Bucket/s"))
 object_arguments(subparsers.add_parser("object", help="work with Object/s"))
 host_arguments(subparsers.add_parser("host", help="work with Host/s"))
 list_bucket = subparsers.add_parser("list_buckets", help="List already created buckets.")
+quote_arguments(subparsers.add_parser("quote", help="work with Quote/s"))
 
 
 def main():
@@ -106,6 +108,18 @@ def main():
             if args.source is not None:
                 source_to_web_host(s3_client, args)
             
+        case "quote":
+            quotes = get_quotes()
+            quote = None
+            if args.inspire is None:
+                quote = get_random_quote(quotes)
+                print(f'"{quote["text"]}"\n- {quote["author"]}')
+            elif isinstance(args.inspire, str):
+                quote = get_random_quote_by_author(args.inspire, quotes)
+                print(f'"{quote["text"]}"\n- {quote["author"]}')
+
+            if (args.save == True):
+                print(save_to_s3(s3_client, args.bucket_name, quote))
 
 
 if __name__ == "__main__":
