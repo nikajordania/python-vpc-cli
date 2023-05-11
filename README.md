@@ -141,3 +141,9 @@ Save quote as json file to an S3 bucket.
 ```shell
 python main.py quote "nztest1111" --inspire "Yoda" --save
 ```
+
+Create VPC add tag name and create and attach IGW to VPC
+
+```shell
+python main.py vpc --vpc_name nikavpctestbtu1
+```

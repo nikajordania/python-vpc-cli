@@ -23,3 +23,15 @@ def init_client():
   client.list_buckets()
 
   return client
+
+
+def init_ec2_client():
+  ec2_client = boto3.client(
+    "ec2",
+    aws_access_key_id=getenv("aws_access_key_id"),
+    aws_secret_access_key=getenv("aws_secret_access_key"),
+    aws_session_token=getenv("aws_session_token"),
+    region_name=getenv("aws_region_name")
+  )
+
+  return ec2_client

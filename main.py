@@ -1,6 +1,6 @@
 import logging
 from botocore.exceptions import ClientError
-from auth import init_client
+from auth import init_client, init_ec2_client
 from bucket.crud import list_buckets, create_bucket, delete_bucket, bucket_exists, show_bucket_tree
 from bucket.policy import read_bucket_policy, assign_policy
 from bucket.versioning import versioning
@@ -9,10 +9,11 @@ from bucket.organize import object_per_extension
 from host_static.host_web_configuration import source_to_web_host
 from object.crud import download_file_and_upload_to_s3, get_objects, upload_local_file
 from object.versioning import list_object_versions, rollback_to_version
-from my_args import bucket_arguments, object_arguments, host_arguments, quote_arguments
+from my_args import bucket_arguments, object_arguments, host_arguments, quote_arguments, vpc_arguments
 # from host_static import host_web_configuration, host_web_page_files
 import argparse
 from quote.quote_api import get_quotes, get_random_quote, get_random_quote_by_author, save_to_s3
+from vpc.crud import add_name_tag, attach_igw_to_vpc, create_igw, create_vpc
 
 parser = argparse.ArgumentParser(
     description="CLI program that helps with S3 buckets.",
@@ -27,10 +28,12 @@ object_arguments(subparsers.add_parser("object", help="work with Object/s"))
 host_arguments(subparsers.add_parser("host", help="work with Host/s"))
 list_bucket = subparsers.add_parser("list_buckets", help="List already created buckets.")
 quote_arguments(subparsers.add_parser("quote", help="work with Quote/s"))
+vpc_arguments(subparsers.add_parser("vpc", help="work with VPC/s"))
 
 
 def main():
     s3_client = init_client()
+    ec2_client = init_ec2_client()
     args = parser.parse_args()
 
     match args.command:
@@ -121,6 +124,12 @@ def main():
             if (args.save == True):
                 print(save_to_s3(s3_client, args.bucket_name, quote))
 
+        case "vpc":
+            if args.vpc_name is not None:
+                vpc_id = create_vpc(ec2_client).get("Vpc").get("VpcId")
+                add_name_tag(ec2_client, vpc_id, args.vpc_name)
+                igw_id = create_igw(ec2_client)
+                attach_igw_to_vpc(ec2_client, vpc_id, igw_id)
 
 if __name__ == "__main__":
     try:

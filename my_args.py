@@ -226,3 +226,14 @@ def quote_arguments(parser):
         action='store_true')
 
     return parser
+
+
+def vpc_arguments(parser):
+    parser.add_argument(
+      "-vn",
+      "--vpc_name",
+      type=str,
+      help="vpc name",
+      default=None)
+
+    return parser
