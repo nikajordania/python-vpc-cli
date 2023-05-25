@@ -145,5 +145,10 @@ python main.py quote "nztest1111" --inspire "Yoda" --save
 Create VPC add tag name and create and attach IGW to VPC
 
 ```shell
-python main.py vpc --vpc_name nikavpctestbtu1
+python main.py vpc --vpc_name nikavpctestbtu1 --subnet_id '10.0.0.0/20'
+```
+
+Create Security Group and Launch EC2 Instance
+```shell
+python main.py vpc --vpc_id vpc-12345678 --subnet_id 10.0.0.0/24
 ```

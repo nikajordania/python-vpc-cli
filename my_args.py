@@ -235,5 +235,19 @@ def vpc_arguments(parser):
       type=str,
       help="vpc name",
       default=None)
+    
+    parser.add_argument(
+      "-vi",
+      "--vpc_id",
+      type=str,
+      help="vpc id",
+      default=None)
+
+    parser.add_argument(
+      "-sn",
+      "--subnet_id",
+      type=str,
+      help="subnet id",
+      default=None)
 
     return parser

@@ -1,4 +1,5 @@
 import logging
+import time
 from botocore.exceptions import ClientError
 from auth import init_client, init_ec2_client
 from bucket.crud import list_buckets, create_bucket, delete_bucket, bucket_exists, show_bucket_tree
@@ -13,7 +14,7 @@ from my_args import bucket_arguments, object_arguments, host_arguments, quote_ar
 # from host_static import host_web_configuration, host_web_page_files
 import argparse
 from quote.quote_api import get_quotes, get_random_quote, get_random_quote_by_author, save_to_s3
-from vpc.crud import add_name_tag, attach_igw_to_vpc, create_igw, create_vpc
+from vpc.crud import add_name_tag, attach_igw_to_vpc, create_igw, create_key_pair, create_security_group, create_subnet, create_vpc, launch_ec2_instance
 
 parser = argparse.ArgumentParser(
     description="CLI program that helps with S3 buckets.",
@@ -130,6 +131,30 @@ def main():
                 add_name_tag(ec2_client, vpc_id, args.vpc_name)
                 igw_id = create_igw(ec2_client)
                 attach_igw_to_vpc(ec2_client, vpc_id, igw_id)
+
+                # wait until the VPC is created
+
+                time.sleep(10)
+                
+                subnet = create_subnet(ec2_client, vpc_id, args.subnet_id)
+                print(subnet)
+                print(f'VPC: {vpc_id} with IGW: {igw_id} created')
+
+            if (args.vpc_id and args.subnet_id) is not None:
+                print(args.vpc_id)
+                print(args.subnet_id)
+                
+                security_group_id = create_security_group(ec2_client, args.vpc_id, args.subnet_id)
+                
+                key_pair_id, key_pair_name = create_key_pair(ec2_client)
+                image_id = 'ami-053b0d53c279acc90'  # Ubuntu AMI ID
+                instance_type = 't2.micro'
+                instance_id, public_ip = launch_ec2_instance(ec2_client, image_id, instance_type, args.subnet_id, security_group_id, key_pair_name)
+                
+                print(f'EC2 instance launched with ID: {instance_id}')
+                print(f'Public IP address: {public_ip}')
+
+
 
 if __name__ == "__main__":
     try:
