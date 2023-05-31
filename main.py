@@ -1,7 +1,7 @@
 import logging
 import time
 from botocore.exceptions import ClientError
-from auth import init_client, init_ec2_client
+from auth import init_aws_client, init_client, init_ec2_client
 from bucket.crud import list_buckets, create_bucket, delete_bucket, bucket_exists, show_bucket_tree
 from bucket.policy import read_bucket_policy, assign_policy
 from bucket.versioning import versioning
@@ -10,10 +10,11 @@ from bucket.organize import object_per_extension
 from host_static.host_web_configuration import source_to_web_host
 from object.crud import download_file_and_upload_to_s3, get_objects, upload_local_file
 from object.versioning import list_object_versions, rollback_to_version
-from my_args import bucket_arguments, object_arguments, host_arguments, quote_arguments, vpc_arguments
+from my_args import bucket_arguments, object_arguments, host_arguments, quote_arguments, rds_arguments, vpc_arguments
 # from host_static import host_web_configuration, host_web_page_files
 import argparse
 from quote.quote_api import get_quotes, get_random_quote, get_random_quote_by_author, save_to_s3
+from rds.crud import create_rds_instance
 from vpc.crud import add_name_tag, attach_igw_to_vpc, create_igw, create_key_pair, create_security_group, create_subnet, create_vpc, launch_ec2_instance
 
 parser = argparse.ArgumentParser(
@@ -30,11 +31,13 @@ host_arguments(subparsers.add_parser("host", help="work with Host/s"))
 list_bucket = subparsers.add_parser("list_buckets", help="List already created buckets.")
 quote_arguments(subparsers.add_parser("quote", help="work with Quote/s"))
 vpc_arguments(subparsers.add_parser("vpc", help="work with VPC/s"))
+rds_arguments(subparsers.add_parser("rds", help="work with RDS/s"))
 
 
 def main():
     s3_client = init_client()
     ec2_client = init_ec2_client()
+    rds_client = init_aws_client('rds')
     args = parser.parse_args()
 
     match args.command:
@@ -154,8 +157,10 @@ def main():
                 print(f'EC2 instance launched with ID: {instance_id}')
                 print(f'Public IP address: {public_ip}')
 
-
-
+        case "rds":
+            if args.db_instance_identifier is not None:
+                if args.security_group_id is not None:
+                    create_rds_instance(rds_client, args)
 if __name__ == "__main__":
     try:
         main()

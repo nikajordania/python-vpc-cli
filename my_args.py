@@ -251,3 +251,37 @@ def vpc_arguments(parser):
       default=None)
 
     return parser
+
+def rds_arguments(parser):
+  
+    parser.add_argument(
+      '--db_instance_identifier',
+      required=True,
+      help='RDS instance identifier')
+    
+    parser.add_argument(
+      '--db_instance_class',
+      nargs="?",
+      default='db.t4g.micro',
+      help='RDS instance class')
+    
+    parser.add_argument(
+      '--allocated_storage',
+      nargs="?",
+      default=60,
+      type=int,
+      help='Allocated storage in GB')
+    
+    parser.add_argument(
+      '--engine',
+      nargs="?",
+      default='mysql',
+      help='RDS engine')
+    
+    parser.add_argument(
+      '--security_group_id',
+      nargs="?",
+      type=str,
+      help='Security Group ID')
+    
+    return parser

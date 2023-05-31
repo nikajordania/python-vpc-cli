@@ -152,3 +152,10 @@ Create Security Group and Launch EC2 Instance
 ```shell
 python main.py vpc --vpc_id vpc-12345678 --subnet_id 10.0.0.0/24
 ```
+
+## RDS
+
+create RDS
+```shell
+python main.py rds --db_instance_identifier db-instance-name --security_group_id sg-123456789
+```

@@ -35,3 +35,24 @@ def init_ec2_client():
   )
 
   return ec2_client
+
+
+def init_rds_client():
+  rds_client = boto3.client(
+    'rds',
+    aws_access_key_id=getenv("aws_access_key_id"),
+    aws_secret_access_key=getenv("aws_secret_access_key"),
+    aws_session_token=getenv("aws_session_token"),
+    region_name=getenv("aws_region_name")
+  )
+  return rds_client
+
+def init_aws_client(service):
+  aws_client = boto3.client(
+    service,
+    aws_access_key_id=getenv("aws_access_key_id"),
+    aws_secret_access_key=getenv("aws_secret_access_key"),
+    aws_session_token=getenv("aws_session_token"),
+    region_name=getenv("aws_region_name")
+  )
+  return aws_client
