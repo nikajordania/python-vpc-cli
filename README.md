@@ -155,7 +155,24 @@ python main.py vpc --vpc_id vpc-12345678 --subnet_id 10.0.0.0/24
 
 ## RDS
 
-create RDS
+Create RDS
 ```shell
 python main.py rds --db_instance_identifier db-instance-name --security_group_id sg-123456789
+```
+
+Increase memory to RDS
+```shell
+python main.py rds --db_instance_identifier db-instance-name --memory_increase_percent 25
+```
+
+Create a manual snapshot of an RDS instance
+```shell
+python main.py rds --db_instance_identifier db-instance-name --snapshot_identifier snapshot
+```
+
+## DynamoDb
+
+Print DynamoDB Tables
+```shell
+python main.py dynamodb print_dynamodb_tables
 ```

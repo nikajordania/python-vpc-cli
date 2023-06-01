@@ -284,4 +284,29 @@ def rds_arguments(parser):
       type=str,
       help='Security Group ID')
     
+    parser.add_argument(
+      '--memory_increase_percent',
+      nargs="?",
+      default=None,
+      type=int, 
+      help='Percentage increase in memory')
+
+    parser.add_argument(
+      '--snapshot_identifier',
+      nargs="?",
+      default=None,
+      type=str,
+      help='Snapshot identifier')
+
     return parser
+
+def dynamodb_arguments(parser):
+  parser.add_argument(
+    "-pdt",
+    "--print_dynamodb_tables",
+    choices=["False", "True"],
+    type=str,
+    help="print dynamodb tables",
+    default=None
+  )
+  return parser

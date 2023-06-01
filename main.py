@@ -7,14 +7,15 @@ from bucket.policy import read_bucket_policy, assign_policy
 from bucket.versioning import versioning
 from bucket.encryption import set_bucket_encryption, read_bucket_encryption
 from bucket.organize import object_per_extension
+from dynamodb.crud import print_dynamodb_tables
 from host_static.host_web_configuration import source_to_web_host
 from object.crud import download_file_and_upload_to_s3, get_objects, upload_local_file
 from object.versioning import list_object_versions, rollback_to_version
-from my_args import bucket_arguments, object_arguments, host_arguments, quote_arguments, rds_arguments, vpc_arguments
+from my_args import bucket_arguments, dynamodb_arguments, object_arguments, host_arguments, quote_arguments, rds_arguments, vpc_arguments
 # from host_static import host_web_configuration, host_web_page_files
 import argparse
 from quote.quote_api import get_quotes, get_random_quote, get_random_quote_by_author, save_to_s3
-from rds.crud import create_rds_instance
+from rds.crud import create_rds_instance, create_rds_snapshot, increase_memory
 from vpc.crud import add_name_tag, attach_igw_to_vpc, create_igw, create_key_pair, create_security_group, create_subnet, create_vpc, launch_ec2_instance
 
 parser = argparse.ArgumentParser(
@@ -32,12 +33,14 @@ list_bucket = subparsers.add_parser("list_buckets", help="List already created b
 quote_arguments(subparsers.add_parser("quote", help="work with Quote/s"))
 vpc_arguments(subparsers.add_parser("vpc", help="work with VPC/s"))
 rds_arguments(subparsers.add_parser("rds", help="work with RDS/s"))
+dynamodb_arguments(subparsers.add_parser("dynamodb", help="work with DynamoDB/s"))
 
 
 def main():
     s3_client = init_client()
     ec2_client = init_ec2_client()
     rds_client = init_aws_client('rds')
+    dynamodb_client = init_aws_client('dynamodb')
     args = parser.parse_args()
 
     match args.command:
@@ -161,6 +164,14 @@ def main():
             if args.db_instance_identifier is not None:
                 if args.security_group_id is not None:
                     create_rds_instance(rds_client, args)
+                if args.memory_increase_percent is not None:
+                    increase_memory(rds_client, args.db_instance_identifier, args.memory_increase_percent)
+                if args.snapshot_identifier is not None:
+                    create_rds_snapshot(rds_client, args.db_instance_identifier, args.snapshot_identifier)
+                    
+        case "dynamodb":
+               if args.print_dynamodb_tables is not None:
+                   print_dynamodb_tables(dynamodb_client)
 if __name__ == "__main__":
     try:
         main()
